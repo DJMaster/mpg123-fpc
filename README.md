@@ -1,6 +1,6 @@
 mpg123-fpc
 ==========
-[mpg123](http://www.mpg123.org/) binding for the Free Pascal Compiler
+[mpg123](http://www.mpg123.org/) header binding for the Free Pascal Compiler aka FPC
 
 Download
 --------
