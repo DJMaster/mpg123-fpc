@@ -43,9 +43,9 @@ const
  * This should be incremented at least each time a new symbol is added
  * to the header.
  *)
-  MPG123_API_VERSION = 42;
+  MPG123_API_VERSION = 43;
 
-  MPG123_LIB_VERSION = '1.23.6';
+  MPG123_LIB_VERSION = '1.24.0';
   MPG123_LIB_PATCHLEVEL = 1;
 
 //TODO /** Defines needed for MS Visual Studio(tm) DLL builds.
@@ -201,7 +201,7 @@ const
   MPG123_OUTSCALE = 11;     (**< the scale for output samples (amplitude - integer or float according to mpg123 output format, normally integer) *)
   MPG123_TIMEOUT = 12;      (**< timeout for reading from a stream (not supported on win32, integer) *)
   MPG123_REMOVE_FLAGS = 13; (**< remove some flags (inverse of MPG123_ADD_FLAGS, integer) *)
-  MPG123_RESYNC_LIMIT = 14; (**< Try resync on frame parsing for that many bytes or until end of stream (<0 ... integer). This can enlarge the limit for skipping junk on beginning, too (but not reduce it).  *)
+  MPG123_RESYNC_LIMIT = 14; (**< Try resync on frame parsing for that many bytes or until end of stream (<0 ... integer). This can enlarge the limit for skipping junk on beginning, too (but not reduce it). *)
   MPG123_INDEX_SIZE = 15;   (**< Set the frame index size (if supported). Values <0 mean that the index is allowed to grow dynamically in these steps (in positive direction, of course) -- Use this when you really want a full index with every individual frame. *)
   MPG123_PREFRAMES = 16;    (**< Decode/ignore that many frames in advance for layer 3. This is needed to fill bit reservoir after seeking, for example (but also at least one frame in advance is needed to have all "normal" data for layer 3). Give a positive integer value, please.*)
   MPG123_FEEDPOOL = 17;     (**< For feeder mode, keep that many buffers in a pool to avoid frequent malloc/free. The pool is allocated on mpg123_open_feed(). If you change this parameter afterwards, you can trigger growth and shrinkage during decoding. The default value could change any time. If you care about this, then set it. (integer) *)
@@ -212,14 +212,14 @@ type
   mpg123_param_flags = clong;
 const
   MPG123_FORCE_MONO = $7;             (**<     0111 Force some mono mode: This is a test bitmask for seeing if any mono forcing is active. *)
-  MPG123_MONO_LEFT = $1;              (**<     0001 Force playback of left channel only.  *)
+  MPG123_MONO_LEFT = $1;              (**<     0001 Force playback of left channel only. *)
   MPG123_MONO_RIGHT = $2;             (**<     0010 Force playback of right channel only. *)
-  MPG123_MONO_MIX = $4;               (**<     0100 Force playback of mixed mono.         *)
-  MPG123_FORCE_STEREO = $8;           (**<     1000 Force stereo output.                  *)
-  MPG123_FORCE_8BIT = $10;            (**< 00010000 Force 8bit formats.                   *)
-  MPG123_QUIET = $20;                 (**< 00100000 Suppress any printouts (overrules verbose).                    *)
+  MPG123_MONO_MIX = $4;               (**<     0100 Force playback of mixed mono. *)
+  MPG123_FORCE_STEREO = $8;           (**<     1000 Force stereo output. *)
+  MPG123_FORCE_8BIT = $10;            (**< 00010000 Force 8bit formats. *)
+  MPG123_QUIET = $20;                 (**< 00100000 Suppress any printouts (overrules verbose). *)
   MPG123_GAPLESS = $40;               (**< 01000000 Enable gapless decoding (default on if libmpg123 has support). *)
-  MPG123_NO_RESYNC = $80;             (**< 10000000 Disable resync stream after error.                             *)
+  MPG123_NO_RESYNC = $80;             (**< 10000000 Disable resync stream after error. *)
   MPG123_SEEKBUFFER = $100;           (**< 000100000000 Enable small buffer on non-seekable streams to allow some peek-ahead (for better MPEG sync). *)
   MPG123_FUZZY = $200;                (**< 001000000000 Enable fuzzy seeks (guessing byte offsets or using approximate seek points from Xing TOC) *)
   MPG123_FORCE_FLOAT = $400;          (**< 010000000000 Force floating point output (32 or 64 bits depends on mpg123 internal precision). *)
@@ -229,12 +229,20 @@ const
   MPG123_IGNORE_INFOFRAME = $4000;    (**< 100 0000 0000 0000 Do not parse the LAME/Xing info frame, treat it as normal MPEG data. *)
   MPG123_AUTO_RESAMPLE = $8000;       (**< 1000 0000 0000 0000 Allow automatic internal resampling of any kind (default on if supported). Especially when going lowlevel with replacing output buffer, you might want to unset this flag. Setting MPG123_DOWNSAMPLE or MPG123_FORCE_RATE will override this. *)
   MPG123_PICTURE = $10000;            (**< 17th bit: Enable storage of pictures from tags (ID3v2 APIC). *)
+  MPG123_NO_PEEK_END = $20000;        (**< 18th bit: Do not seek to the end of
+                                       *  the stream in order to probe
+                                       *  the stream length and search for the id3v1 field. This also means
+                                       *  the file size is unknown unless set using mpg123_set_filesize() and
+                                       *  the stream is assumed as non-seekable unless overridden.
+                                       *)
+  MPG123_FORCE_SEEKABLE = $40000;     (**< 19th bit: Force the stream to be seekable. *)
+
 
 (** choices for MPG123_RVA *)
 type
   mpg123_param_rva = clong;
 const
-  MPG123_RVA_OFF = 0;                (**< RVA disabled (default).   *)
+  MPG123_RVA_OFF = 0;                (**< RVA disabled (default). *)
   MPG123_RVA_MIX = 1;                (**< Use mix/track/radio gain. *)
   MPG123_RVA_ALBUM = 2;              (**< Use album/audiophile gain *)
   MPG123_RVA_MAX = MPG123_RVA_ALBUM; (**< The maximum RVA code, may increase in future. *)
@@ -264,18 +272,18 @@ type
   mpg123_feature_set = clong;
 const
   MPG123_FEATURE_ABI_UTF8OPEN = 0;       (**< mpg123 expects path names to be given in UTF-8 encoding instead of plain native. *)
-  MPG123_FEATURE_OUTPUT_8BIT = 1;        (**< 8bit output   *)
-  MPG123_FEATURE_OUTPUT_16BIT = 2;       (**< 16bit output  *)
-  MPG123_FEATURE_OUTPUT_32BIT = 3;       (**< 32bit output  *)
+  MPG123_FEATURE_OUTPUT_8BIT = 1;        (**< 8bit output *)
+  MPG123_FEATURE_OUTPUT_16BIT = 2;       (**< 16bit output *)
+  MPG123_FEATURE_OUTPUT_32BIT = 3;       (**< 32bit output *)
   MPG123_FEATURE_INDEX = 4;              (**< support for building a frame index for accurate seeking *)
   MPG123_FEATURE_PARSE_ID3V2 = 5;        (**< id3v2 parsing *)
   MPG123_FEATURE_DECODE_LAYER1 = 6;      (**< mpeg layer-1 decoder enabled *)
   MPG123_FEATURE_DECODE_LAYER2 = 7;      (**< mpeg layer-2 decoder enabled *)
   MPG123_FEATURE_DECODE_LAYER3 = 8;      (**< mpeg layer-3 decoder enabled *)
-  MPG123_FEATURE_DECODE_ACCURATE = 9;    (**< accurate decoder rounding    *)
-  MPG123_FEATURE_DECODE_DOWNSAMPLE = 10; (**< downsample (sample omit)     *)
-  MPG123_FEATURE_DECODE_NTOM = 11;       (**< flexible rate decoding       *)
-  MPG123_FEATURE_PARSE_ICY = 12;         (**< ICY support                  *)
+  MPG123_FEATURE_DECODE_ACCURATE = 9;    (**< accurate decoder rounding *)
+  MPG123_FEATURE_DECODE_DOWNSAMPLE = 10; (**< downsample (sample omit) *)
+  MPG123_FEATURE_DECODE_NTOM = 11;       (**< flexible rate decoding *)
+  MPG123_FEATURE_PARSE_ICY = 12;         (**< ICY support *)
   MPG123_FEATURE_TIMEOUT_READ = 13;      (**< Reader with timeout (network). *)
   MPG123_FEATURE_EQUALIZER = 14;         (**< tunable equalizer *)
 
@@ -329,7 +337,7 @@ const
   MPG123_OK = 0;                 (**< Success *)
   MPG123_BAD_OUTFORMAT = 1;      (**< Unable to set up output format! *)
   MPG123_BAD_CHANNEL = 2;        (**< Invalid channel number specified. *)
-  MPG123_BAD_RATE = 3;           (**< Invalid sample rate specified.  *)
+  MPG123_BAD_RATE = 3;           (**< Invalid sample rate specified. *)
   MPG123_ERR_16TO8TABLE = 4;     (**< Unable to allocate memory for 16 to 8 converter table! *)
   MPG123_BAD_PARAM = 5;          (**< Bad parameter id! *)
   MPG123_BAD_BUFFER = 6;         (**< Bad buffer given -- invalid pointer or too small size. *)
@@ -1200,7 +1208,7 @@ type
   ppmpg123_id3v1 = ^pmpg123_id3v1;
   mpg123_id3v1 = record
     tag: array[0..2] of char;      (**< Always the string "TAG", the classic intro. *)
-    title: array[0..29] of char;   (**< Title string.  *)
+    title: array[0..29] of char;   (**< Title string. *)
     artist: array[0..29] of char;  (**< Artist string. *)
     album: array[0..29] of char;   (**< Album string. *)
     year: array[0..3] of char;     (**< Year string. *)
