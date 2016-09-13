@@ -28,7 +28,7 @@ uses
 type
   ppcchar = ^pcchar;
   ppclong = ^pclong;
-  psize_t = ^csize_t;
+  pcsize_t = ^csize_t;
   ppcint = ^pcint;
   off_t = cint;
   poff_t = ^coff_t;
@@ -470,13 +470,13 @@ const
  *  You can still force mpg123 to resample to a different one, but by default you will only get audio in one of these samplings.
  *  \param list Store a pointer to the sample rates array there.
  *  \param number Store the number of sample rates there. *)
-procedure mpg123_rates(const list: ppclong; number: psize_t); cdecl; external LIB_MPG123;
+procedure mpg123_rates(const list: ppclong; number: pcsize_t); cdecl; external LIB_MPG123;
 
 (** An array of supported audio encodings.
  *  An audio encoding is one of the fully qualified members of mpg123_enc_enum (MPG123_ENC_SIGNED_16, not MPG123_SIGNED).
  *  \param list Store a pointer to the encodings array there.
  *  \param number Store the number of encodings there. *)
-procedure mpg123_encodings(const list: ppcint; number: psize_t); cdecl; external LIB_MPG123;
+procedure mpg123_encodings(const list: ppcint; number: pcsize_t); cdecl; external LIB_MPG123;
 
 (** Return the size (in bytes) of one mono sample of the named encoding.
  * \param encoding The encoding value to analyze.
@@ -581,7 +581,7 @@ function mpg123_close(mh: pmpg123_handle): cint; cdecl; external LIB_MPG123;
  *  \param done address to store the number of actually decoded bytes to
  *  \return MPG123_OK or error/message code
  *)
-function mpg123_read(mh: pmpg123_handle; outmemory: pcuchar; outmemsize: size_t; done: psize_t): cint; cdecl; external LIB_MPG123;
+function mpg123_read(mh: pmpg123_handle; outmemory: pcuchar; outmemsize: csize_t; done: pcsize_t): cint; cdecl; external LIB_MPG123;
 
 (** Feed data for a stream that has been opened with mpg123_open_feed().
  *  It's give and take: You provide the bytestream, mpg123 gives you the decoded samples.
@@ -590,7 +590,7 @@ function mpg123_read(mh: pmpg123_handle; outmemory: pcuchar; outmemsize: size_t;
  *  \param size number of input bytes
  *  \return MPG123_OK or error/message code.
  *)
-function mpg123_feed(mh: pmpg123_handle; const _in: pcuchar; size: size_t): cint; cdecl; external LIB_MPG123;
+function mpg123_feed(mh: pmpg123_handle; const _in: pcuchar; size: csize_t): cint; cdecl; external LIB_MPG123;
 
 (** Decode MPEG Audio from inmemory to outmemory.
  *  This is very close to a drop-in replacement for old mpglib.
@@ -607,7 +607,7 @@ function mpg123_feed(mh: pmpg123_handle; const _in: pcuchar; size: size_t): cint
  *  \param done address to store the number of actually decoded bytes to
  *  \return error/message code (watch out especially for MPG123_NEED_MORE)
  *)
-function mpg123_decode(mh: pmpg123_handle; const inmemory: pcuchar ; inmemsize: size_t; outmemory: pcuchar; outmemsize: size_t; done: psize_t): cint; cdecl; external LIB_MPG123;
+function mpg123_decode(mh: pmpg123_handle; const inmemory: pcuchar ; inmemsize: csize_t; outmemory: pcuchar; outmemsize: csize_t; done: pcsize_t): cint; cdecl; external LIB_MPG123;
 
 (** Decode next MPEG frame to internal buffer
  *  or read a frame and return after setting a new format.
@@ -617,7 +617,7 @@ function mpg123_decode(mh: pmpg123_handle; const inmemory: pcuchar ; inmemsize: 
  *  \param bytes number of output bytes ready in the buffer
  *  \return MPG123_OK or error/message code
  *)
-function mpg123_decode_frame(mh: pmpg123_handle; num: poff_t; audio: ppcuchar; bytes: psize_t): cint; cdecl; external LIB_MPG123;
+function mpg123_decode_frame(mh: pmpg123_handle; num: poff_t; audio: ppcuchar; bytes: pcsize_t): cint; cdecl; external LIB_MPG123;
 
 (** Decode current MPEG frame to internal buffer.
  * Warning: This is experimental API that might change in future releases!
@@ -628,7 +628,7 @@ function mpg123_decode_frame(mh: pmpg123_handle; num: poff_t; audio: ppcuchar; b
  *  \param bytes number of output bytes ready in the buffer
  *  \return MPG123_OK or error/message code
  *)
-function mpg123_framebyframe_decode(mh: pmpg123_handle; num: poff_t; audio: ppcuchar; bytes: psize_t): cint; cdecl; external LIB_MPG123;
+function mpg123_framebyframe_decode(mh: pmpg123_handle; num: poff_t; audio: ppcuchar; bytes: pcsize_t): cint; cdecl; external LIB_MPG123;
 
 (** Find, read and parse the next mp3 frame
  * Warning: This is experimental API that might change in future releases!
@@ -653,7 +653,7 @@ function mpg123_framebyframe_next(mh: pmpg123_handle): cint; cdecl; external LIB
  *    explanation, the error state of the mpg123_handle is not modified by
  *    this function).
  *)
-function mpg123_framedata(mh: pmpg123_handle; header: pculong; bodydata: ppcuchar; bodybytes: psize_t): cint; cdecl; external LIB_MPG123;
+function mpg123_framedata(mh: pmpg123_handle; header: pculong; bodydata: ppcuchar; bodybytes: pcsize_t): cint; cdecl; external LIB_MPG123;
 
 (** Get the input position (byte offset in stream) of the last parsed frame.
  * This can be used for external seek index building, for example.
@@ -742,7 +742,7 @@ function mpg123_timeframe(mh: pmpg123_handle; sec: cdouble): off_t; cdecl; exter
  *  \param fill number of recorded index offsets; size of the array
  *  \return MPG123_OK on success
  *)
-function mpg123_index(mh: pmpg123_handle; offsets: ppoff_t; step: poff_t; fill: psize_t): cint; cdecl; external LIB_MPG123;
+function mpg123_index(mh: pmpg123_handle; offsets: ppoff_t; step: poff_t; fill: pcsize_t): cint; cdecl; external LIB_MPG123;
 
 (** Set the frame index table
  *  Setting offsets to NULL and fill > 0 will allocate fill entries. Setting offsets
@@ -753,7 +753,7 @@ function mpg123_index(mh: pmpg123_handle; offsets: ppoff_t; step: poff_t; fill: 
  *  \param fill    number of recorded index offsets; size of the array
  *  \return MPG123_OK on success
  *)
-function mpg123_set_index(mh: pmpg123_handle; offsets: poff_t; step: off_t; fill: size_t): cint; cdecl; external LIB_MPG123;
+function mpg123_set_index(mh: pmpg123_handle; offsets: poff_t; step: off_t; fill: csize_t): cint; cdecl; external LIB_MPG123;
 
 (** An old crutch to keep old mpg123 binaries happy.
  *  WARNING: This function is there only to avoid runtime linking errors with
@@ -902,7 +902,7 @@ function mpg123_info(mh: pmpg123_handle; mi: pmpg123_frameinfo): cint; cdecl; ex
  *  (when you want to replace the internal buffer)
  *  \return safe buffer size
  *)
-function mpg123_safe_buffer(): size_t; cdecl; external LIB_MPG123;
+function mpg123_safe_buffer(): csize_t; cdecl; external LIB_MPG123;
 
 (** Make a full parsing scan of each frame in the file. ID3 tags are found. An
  *  accurate length value is stored. Seek index will be filled. A seek back to
@@ -985,8 +985,8 @@ type
   pmpg123_string = ^mpg123_string;
   mpg123_string = record
     p: pchar;     (**< pointer to the string data *)
-    size: size_t; (**< raw number of bytes allocated *)
-    fill: size_t; (**< number of used bytes (including closing zero byte) *)
+    size: csize_t; (**< raw number of bytes allocated *)
+    fill: csize_t; (**< number of used bytes (including closing zero byte) *)
   end;
 
 (** Create and allocate memory for a new mpg123_string
@@ -1004,7 +1004,7 @@ procedure mpg123_free_string(sb: pmpg123_string); cdecl; external LIB_MPG123;
  *  \param news new size in bytes
  *  \return 0 on error, 1 on success
  *)
-function mpg123_resize_string(sb: pmpg123_string; news: size_t): cint; cdecl; external LIB_MPG123;
+function mpg123_resize_string(sb: pmpg123_string; news: csize_t): cint; cdecl; external LIB_MPG123;
 
 (** Increase size of a mpg123_string if necessary (it may stay larger).
  *  Note that the functions for adding and setting in current libmpg123
@@ -1015,7 +1015,7 @@ function mpg123_resize_string(sb: pmpg123_string; news: size_t): cint; cdecl; ex
  *  \param news new minimum size
  *  \return 0 on error, 1 on success
  *)
-function mpg123_grow_string(sb: pmpg123_string; news: size_t): cint; cdecl; external LIB_MPG123;
+function mpg123_grow_string(sb: pmpg123_string; news: csize_t): cint; cdecl; external LIB_MPG123;
 
 (** Copy the contents of one mpg123_string string to another.
  *  Yes the order of arguments is reversed compated to memcpy().
@@ -1039,7 +1039,7 @@ function mpg123_add_string(sb: pmpg123_string; const stuff: pchar): cint; cdecl;
  *  \param count number of characters to copy (a null-byte is always appended)
  *  \return 0 on error, 1 on success
  *)
-function mpg123_add_substring(sb: pmpg123_string; const stuff: pchar; from: size_t; count: size_t): cint; cdecl; external LIB_MPG123;
+function mpg123_add_substring(sb: pmpg123_string; const stuff: pchar; from: csize_t; count: csize_t): cint; cdecl; external LIB_MPG123;
 
 (** Set the content of a mpg123_string to a C-string
  *  \param sb string handle
@@ -1055,7 +1055,7 @@ function mpg123_set_string(sb: pmpg123_string; const stuff: pchar): cint; cdecl;
  *  \param count number of characters to copy (a null-byte is always appended)
  *  \return 0 on error, 1 on success
  *)
-function mpg123_set_substring(sb: pmpg123_string; const stuff: pchar; from: size_t; count: size_t): cint; cdecl; external LIB_MPG123;
+function mpg123_set_substring(sb: pmpg123_string; const stuff: pchar; from: csize_t; count: csize_t): cint; cdecl; external LIB_MPG123;
 
 (** Count characters in a mpg123 string (non-null bytes or UTF-8 characters).
  *  Even with the fill property, the character count is not obvious as there could be multiple trailing null bytes.
@@ -1063,7 +1063,7 @@ function mpg123_set_substring(sb: pmpg123_string; const stuff: pchar; from: size
  *  \param utf8 a flag to tell if the string is in utf8 encoding
  *  \return character count
 *)
-function mpg123_strlen(sb: pmpg123_string; utf8: cint): size_t; cdecl; external LIB_MPG123;
+function mpg123_strlen(sb: pmpg123_string; utf8: cint): csize_t; cdecl; external LIB_MPG123;
 
 (** Remove trailing \\r and \\n, if present.
  *  \param sb string handle
@@ -1116,7 +1116,7 @@ function mpg123_enc_from_id3(id3_enc_byte: cuchar): mpg123_text_encoding; cdecl;
  *  \param source_size number of bytes in the source buffer
  *  \return 0 on error, 1 on success (on error, mpg123_free_string is called on sb)
  *)
-function mpg123_store_utf8(sb: pmpg123_string; enc: mpg123_text_encoding; const source: pcuchar; source_size: size_t): cint; cdecl; external LIB_MPG123;
+function mpg123_store_utf8(sb: pmpg123_string; enc: mpg123_text_encoding; const source: pcuchar; source_size: csize_t): cint; cdecl; external LIB_MPG123;
 
 (** Sub data structure for ID3v2, for storing various text fields (including comments).
  *  This is for ID3v2 COMM, TXXX and all the other text fields.
@@ -1167,7 +1167,7 @@ type
     pic_type: char;             (**< mpg123_id3_pic_type value *)
     description: mpg123_string; (**< description string *)
     mime_type: mpg123_string;   (**< MIME type *)
-    size: size_t;               (**< size in bytes *)
+    size: csize_t;               (**< size in bytes *)
     data: pcuchar;              (**< pointer to the image data *)
   end;
 
@@ -1190,13 +1190,13 @@ type
     (* Encountered ID3v2 fields are appended to these lists.
        There can be multiple occurences, the pointers above always point to the last encountered data. *)
     comment_list: pmpg123_text;    (**< Array of comments. *)
-    comments: size_t;              (**< Number of comments. *)
+    comments: csize_t;              (**< Number of comments. *)
     text: pmpg123_text;            (**< Array of ID3v2 text fields (including USLT) *)
-    texts: size_t;                 (**< Numer of text fields. *)
+    texts: csize_t;                 (**< Numer of text fields. *)
     extra: pmpg123_text;           (**< The array of extra (TXXX) fields. *)
-    extras: size_t;                (**< Number of extra text (TXXX) fields. *)
+    extras: csize_t;                (**< Number of extra text (TXXX) fields. *)
     picture: pmpg123_picture_type; (**< Array of ID3v2 pictures fields (APIC). *)
-    pictures: size_t;              (**< Number of picture (APIC) fields. *)
+    pictures: csize_t;              (**< Number of picture (APIC) fields. *)
   end;
 
 (** Data structure for ID3v1 tags (the last 128 bytes of a file).
@@ -1371,14 +1371,14 @@ function mpg123_getpar(mp: pmpg123_pars; _type: mpg123_parms; val: pclong; fval:
   * \param size of buffer in bytes
   * \return MPG123_OK on success
   *)
-function mpg123_replace_buffer(mh: pmpg123_handle; data: pcuchar; size: size_t): cint; cdecl; external LIB_MPG123;
+function mpg123_replace_buffer(mh: pmpg123_handle; data: pcuchar; size: csize_t): cint; cdecl; external LIB_MPG123;
 
 (** The max size of one frame's decoded output with current settings.
  *  Use that to determine an appropriate minimum buffer size for decoding one frame.
  *  \param mh handle
  *  \return maximum decoded data size in bytes
  *)
-function mpg123_outblock(mh: pmpg123_handle): size_t; cdecl; external LIB_MPG123;
+function mpg123_outblock(mh: pmpg123_handle): csize_t; cdecl; external LIB_MPG123;
 
 (** Replace low-level stream access functions; read and lseek as known in POSIX.
  *  You can use this to make any fancy file opening/closing yourself,
@@ -1394,7 +1394,7 @@ function mpg123_outblock(mh: pmpg123_handle): size_t; cdecl; external LIB_MPG123
  * \return MPG123_OK on success
  *)
 type
-  mpg123_readproc = function(fd: pointer; buf: pointer; count: size_t): size_t; cdecl;
+  mpg123_readproc = function(fd: pointer; buf: pointer; count: csize_t): csize_t; cdecl;
   mpg123_seekproc = function(fd: pointer; count: off_t; offset: cint): off_t; cdecl;
 
 function mpg123_replace_reader(mh: pmpg123_handle; r_read: mpg123_readproc; r_lseek: mpg123_seekproc): cint; cdecl; external LIB_MPG123;
