@@ -22,8 +22,7 @@ unit mpg123;
 interface
 
 uses
-  ctypes,
-  fmt123;
+  ctypes;
 
 type
   ppcchar = ^pcchar;
