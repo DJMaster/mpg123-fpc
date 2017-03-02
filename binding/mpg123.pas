@@ -5,7 +5,7 @@
 //
 
 (*
-    libmpg123: MPEG Audio Decoder library (version 1.23.6)
+    libmpg123: MPEG Audio Decoder library (version 1.24.0)
 
     copyright 1995-2015 by the mpg123 project
     free software under the terms of the LGPL 2.1
@@ -30,8 +30,8 @@ type
   pcsize_t = ^csize_t;
   ppcint = ^pcint;
   off_t = cint;
-  poff_t = ^coff_t;
   ppoff_t = ^poff_t;
+  poff_t = ^coff_t;
   ppcuchar = ^pcuchar;
 
 const
@@ -42,10 +42,9 @@ const
  * This should be incremented at least each time a new symbol is added
  * to the header.
  *)
-  MPG123_API_VERSION = 43;
-
   MPG123_LIB_VERSION = '1.24.0';
-  MPG123_LIB_PATCHLEVEL = 1;
+  MPG123_API_VERSION = 43;
+  MPG123_LIB_PATCHLEVEL = 0;
 
 //TODO /** Defines needed for MS Visual Studio(tm) DLL builds.
 //TODO  * Every public function must be prefixed with MPG123_EXPORT. When building
@@ -68,7 +67,8 @@ const
 //TODO #endif
 //TODO
 //TODO /* This is for Visual Studio, so this header works as distributed in the binary downloads */
-//TODO #if defined(_MSC_VER)
+//TODO #if defined(_MSC_VER) && !defined(MPG123_DEF_SSIZE_T)
+//TODO #define MPG123_DEF_SSIZE_T
 //TODO #include <stddef.h>
 //TODO typedef ptrdiff_t ssize_t;
 //TODO #endif
@@ -446,7 +446,7 @@ function mpg123_current_decoder(mh: pmpg123_handle): pchar; cdecl; external LIB_
  *
  * Before you dive in, please be warned that you might get confused by this. This seems to happen a lot, therefore I am trying to explain in advance.
  *
- * The mpg123 library decides what output format to use when encountering the first frame in a stream, or actually any frame that is still valid but differs from the frames before in the prompted output format. At such a deciding point, an internal table of allowed encodings, sampling rates and channel setups is consulted. According to this table, an output format is chosen and the decoding engine set up accordingly (including ptimized routines for different output formats). This might seem unusual but it just follows from the non-existence of "MPEG audio files" with defined overall properties. There are streams, streams are concatenations of (semi) independent frames. We store streams on disk and call them "MPEG audio files", but that does not change their nature as the decoder is concerned (the LAME/Xing header for gapless decoding makes things interesting again).
+ * The mpg123 library decides what output format to use when encountering the first frame in a stream, or actually any frame that is still valid but differs from the frames before in the prompted output format. At such a deciding point, an internal table of allowed encodings, sampling rates and channel setups is consulted. According to this table, an output format is chosen and the decoding engine set up accordingly (including optimized routines for different output formats). This might seem unusual but it just follows from the non-existence of "MPEG audio files" with defined overall properties. There are streams, streams are concatenations of (semi) independent frames. We store streams on disk and call them "MPEG audio files", but that does not change their nature as the decoder is concerned (the LAME/Xing header for gapless decoding makes things interesting again).
  *
  * To get to the point: What you do with mpg123_format() and friends is to fill the internal table of allowed formats before it is used. That includes removing support for some formats or adding your forced sample rate (see MPG123_FORCE_RATE) that will be used with the crude internal resampler. Also keep in mind that the sample encoding is just a question of choice -- the MPEG frames do only indicate their native sampling rate and channel count. If you want to decode to integer or float samples, 8 or 16 bit ... that is your decision. In a "clean" world, libmpg123 would always decode to 32 bit float and let you handle any sample conversion. But there are optimized routines that work faster by directly decoding to the desired encoding / accuracy. We prefer efficiency over conceptual tidyness.
  *

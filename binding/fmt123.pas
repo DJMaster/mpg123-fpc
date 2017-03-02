@@ -117,8 +117,8 @@ const
  *  values.
  *)
 type
-  pmpg123_fmt = ^mpg123_fmt;
   ppmpg123_fmt = ^pmpg123_fmt;
+  pmpg123_fmt = ^mpg123_fmt;
   mpg123_fmt = record
     rate: clong;    (**< sampling rate in Hz  *)
     channels: cint; (**< channel count *)
