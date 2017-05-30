@@ -5,7 +5,7 @@
 //
 
 (*
-    libmpg123: MPEG Audio Decoder library (version 1.24.0)
+    libmpg123: MPEG Audio Decoder library (version 1.25.0)
 
     copyright 1995-2015 by the mpg123 project
     free software under the terms of the LGPL 2.1
@@ -42,8 +42,8 @@ const
  * This should be incremented at least each time a new symbol is added
  * to the header.
  *)
-  MPG123_LIB_VERSION = '1.24.0';
-  MPG123_API_VERSION = 43;
+  MPG123_LIB_VERSION = '1.25.0';
+  MPG123_API_VERSION = 44;
   MPG123_LIB_PATCHLEVEL = 0;
 
 //TODO /** Defines needed for MS Visual Studio(tm) DLL builds.
@@ -514,6 +514,10 @@ function mpg123_format(mh: pmpg123_handle; rate: clong; channels: cint; encoding
 function mpg123_format_support(mh: pmpg123_handle; rate: clong; encoding: cint): cint; cdecl; external LIB_MPG123;
 
 (** Get the current output format written to the addresses given.
+ *  If the stream is freshly loaded, this will try to parse enough
+ *  of it to give you the format to come. This clears the flag that
+ *  would otherwise make the first decoding call return
+ *  MPG123_NEW_FORMAT.
  *  \param mh handle
  *  \param rate sampling rate return address
  *  \param channels channel count return address
@@ -521,6 +525,19 @@ function mpg123_format_support(mh: pmpg123_handle; rate: clong; encoding: cint):
  *  \return MPG123_OK on success
  *)
 function mpg123_getformat(mh: pmpg123_handle; rate: pclong; channels: pcint; encoding: pcint): cint; cdecl; external LIB_MPG123;
+
+(** Get the current output format written to the addresses given.
+ *  This differs from plain mpg123_getformat() in that you can choose
+ *  _not_ to clear the flag that would trigger the next decoding call
+ *  to return MPG123_NEW_FORMAT in case of a new format arriving.
+ *  \param mh handle
+ *  \param rate sampling rate return address
+ *  \param channels channel count return address
+ *  \param encoding encoding return address
+ *  \param clear_flag if true, clear internal format flag
+ *  \return MPG123_OK on success
+ *)
+function mpg123_getformat2(mh: pmpg123_handle;	rate: pclong; channels: pcint; encoding: pcint; clear_flag: cint): cint; cdecl; external LIB_MPG123;
 
 (*@}*)
 
