@@ -5,7 +5,7 @@
 //
 
 (*
-    libmpg123: MPEG Audio Decoder library (version 1.25.0)
+    libmpg123: MPEG Audio Decoder library
 
     copyright 1995-2015 by the mpg123 project
     free software under the terms of the LGPL 2.1
@@ -42,9 +42,9 @@ const
  * This should be incremented at least each time a new symbol is added
  * to the header.
  *)
-  MPG123_LIB_VERSION = '1.25.0';
+  MPG123_LIB_VERSION = '1.25.6';
   MPG123_API_VERSION = 44;
-  MPG123_LIB_PATCHLEVEL = 0;
+  MPG123_LIB_PATCHLEVEL = 5;
 
 //TODO /** Defines needed for MS Visual Studio(tm) DLL builds.
 //TODO  * Every public function must be prefixed with MPG123_EXPORT. When building
