@@ -53,7 +53,7 @@ const
  * to the header.
  *)
 const
-  OUT123_LIB_VERSION = '1.25.6';
+  OUT123_LIB_VERSION = '1.25.8';
   OUT123_API_VERSION = 2;
   OUT123_LIB_PATCHLEVEL = 1;
 
