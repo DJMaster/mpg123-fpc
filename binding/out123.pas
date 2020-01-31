@@ -53,9 +53,9 @@ const
  * to the header.
  *)
 const
-  OUT123_LIB_VERSION = '1.25.8';
+  OUT123_LIB_VERSION = '1.25.13';
   OUT123_API_VERSION = 2;
-  OUT123_LIB_PATCHLEVEL = 1;
+  OUT123_LIB_PATCHLEVEL = 2;
 
 // (** Defines needed for MS Visual Studio(tm) DLL builds.
 //  * Every public function must be prefixed with MPG123_EXPORT. When building

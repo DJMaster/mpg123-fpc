@@ -42,9 +42,9 @@ const
  * This should be incremented at least each time a new symbol is added
  * to the header.
  *)
-  MPG123_LIB_VERSION = '1.25.8';
+  MPG123_LIB_VERSION = '1.25.13';
   MPG123_API_VERSION = 44;
-  MPG123_LIB_PATCHLEVEL = 7;
+  MPG123_LIB_PATCHLEVEL = 10;
 
 //TODO /** Defines needed for MS Visual Studio(tm) DLL builds.
 //TODO  * Every public function must be prefixed with MPG123_EXPORT. When building
